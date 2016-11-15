@@ -2,6 +2,7 @@
 
 ## Highlighted Features
 
+* Added a data export task to help with research (Alex Parsons)
 * Added favicon to `admin`, `no_chrome` and attachment to html layouts
   (Gareth Rees)
 * Search for requests made to a tagged set of public authorities (Henare Degan)
