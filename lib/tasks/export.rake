@@ -51,9 +51,10 @@ def name_censor_lambda(property)
 end
 
 # clunky wrapper for Rails' find_each method to cope with tables that
-# don't have a primary key
+# don't have an integer type primary key
 def find_each_record(model)
-  if model.primary_key
+  # if the model has a primary key and the primary key is an integer
+  if model.primary_key && model.columns_hash[model.primary_key].type == :integer
     model.find_each { |record| yield record }
   else
     limit = 1000
