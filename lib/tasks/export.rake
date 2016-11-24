@@ -76,8 +76,8 @@ end
 # Returns a String
 def csv_export(model, query=nil, header=nil, override={})
   # set query and header to default values unless supplied
-  query = model unless query
-  header = model.column_names unless header
+  query  ||= model
+  header ||= model.column_names
 
   now = Time.now.strftime("%d-%m-%Y")
   filename = "exports/#{model.name}-#{now}.csv"
