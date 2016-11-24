@@ -88,7 +88,7 @@ def csv_export(model, query=nil, header=nil, override={})
     csv << header
     find_each_record(query) do |item|
       line  = []
-      for h in header
+      header.each do |h|
         if override.key?(h) #do we have an override for this column?
           line.append(override[h][item]) #if so send to lambda
         else
