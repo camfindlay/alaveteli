@@ -11,6 +11,9 @@ class AlaveteliPro::InfoRequestsController < AlaveteliPro::BaseController
 
   def index
     @info_requests = current_user.info_requests
+    if params[:phase]
+      @info_requests = @info_requests.send(params[:phase])
+    end
   end
 
   def new
