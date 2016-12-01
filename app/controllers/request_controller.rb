@@ -142,7 +142,12 @@ class RequestController < ApplicationController
     if cannot?(:read, @info_request)
       return render_hidden
     end
-    @columns = ['id', 'event_type', 'created_at', 'described_state', 'last_described_at', 'calculated_state' ]
+    @columns = ['id',
+                'event_type',
+                'created_at',
+                'described_state',
+                'last_described_at',
+                'calculated_state' ]
   end
 
   # Requests similar to this one
@@ -156,13 +161,15 @@ class RequestController < ApplicationController
       raise ActiveRecord::RecordNotFound.new("Sorry. No pages after #{MAX_RESULTS / PER_PAGE}.")
     end
     @info_request = InfoRequest.find_by_url_title!(params[:url_title])
-    raise ActiveRecord::RecordNotFound.new("Request not found") if @info_request.nil?
 
     if cannot?(:read, @info_request)
       return render_hidden
     end
-    @xapian_object = ActsAsXapian::Similar.new([InfoRequestEvent], @info_request.info_request_events,
-                                               :offset => (@page - 1) * @per_page, :limit => @per_page, :collapse_by_prefix => 'request_collapse')
+    @xapian_object = ActsAsXapian::Similar.new([InfoRequestEvent],
+                                               @info_request.info_request_events,
+                                               :offset => (@page - 1) * @per_page,
+                                               :limit => @per_page,
+                                               :collapse_by_prefix => 'request_collapse')
     @matches_estimated = @xapian_object.matches_estimated
     @show_no_more_than = (@matches_estimated > MAX_RESULTS) ? MAX_RESULTS : @matches_estimated
   end
@@ -436,7 +443,7 @@ class RequestController < ApplicationController
 
   # Submitted to the describing state of messages form
   def describe_state
-    info_request = InfoRequest.find(params[:id].to_i)
+    info_request = InfoRequest.not_embargoed.find(params[:id].to_i)
     set_last_request(info_request)
 
     # If this is an external request, go to the request page - we don't allow
@@ -467,7 +474,8 @@ class RequestController < ApplicationController
     end
 
     if params[:last_info_request_event_id].to_i != info_request.last_event_id_needing_description
-      flash[:error] = _("The request has been updated since you originally loaded this page. Please check for any new incoming messages below, and try again.")
+      flash[:error] = _("The request has been updated since you originally loaded this page. " \
+                        "Please check for any new incoming messages below, and try again.")
       redirect_to request_url(info_request)
       return
     end
@@ -478,7 +486,8 @@ class RequestController < ApplicationController
     # the administrators.
     # If this message hasn't been included then ask for it
     if ["error_message", "requires_admin"].include?(described_state) && message.nil?
-      redirect_to describe_state_message_url(:url_title => info_request.url_title, :described_state => described_state)
+      redirect_to describe_state_message_url(:url_title => info_request.url_title,
+                                             :described_state => described_state)
       return
     end
 
@@ -541,7 +550,7 @@ class RequestController < ApplicationController
 
   # Collect a message to include with the change of state
   def describe_state_message
-    @info_request = InfoRequest.find_by_url_title!(params[:url_title])
+    @info_request = InfoRequest.not_embargoed.find_by_url_title!(params[:url_title])
     @described_state = params[:described_state]
     @last_info_request_event_id = @info_request.last_event_id_needing_description
     @title = case @described_state
@@ -558,6 +567,9 @@ class RequestController < ApplicationController
   # proper URL for the message the event refers to
   def show_request_event
     @info_request_event = InfoRequestEvent.find(params[:info_request_event_id])
+    if @info_request_event.info_request.embargo
+      raise ActiveRecord::RecordNotFound
+    end
     if @info_request_event.is_incoming_message?
       redirect_to incoming_message_url(@info_request_event.incoming_message), :status => :moved_permanently
     elsif @info_request_event.is_outgoing_message?
@@ -724,7 +736,7 @@ class RequestController < ApplicationController
   def upload_response
     @locale = I18n.locale.to_s
     I18n.with_locale(@locale) do
-      @info_request = InfoRequest.find_by_url_title!(params[:url_title])
+      @info_request = InfoRequest.not_embargoed.find_by_url_title!(params[:url_title])
 
       @reason_params = {
         :web => _("To upload a response, you must be logged in using an " \
@@ -797,7 +809,7 @@ class RequestController < ApplicationController
   def download_entire_request
     @locale = I18n.locale.to_s
     I18n.with_locale(@locale) do
-      @info_request = InfoRequest.find_by_url_title!(params[:url_title])
+      @info_request = InfoRequest.not_embargoed.find_by_url_title!(params[:url_title])
       if authenticated?(
           :web => _("To download the zip file"),
           :email => _("Then you can download a zip file of {{info_request_title}}.",
@@ -821,6 +833,16 @@ class RequestController < ApplicationController
   end
 
   private
+
+  def render_hidden(template='request/hidden', opts = {})
+    # An embargoed is totally hidden - no indication that anything exists there
+    # to see
+    if @info_request && @info_request.embargo
+      raise ActiveRecord::RecordNotFound
+    else
+      return super(template, opts)
+    end
+  end
 
   def info_request_params(batch = false)
     if batch

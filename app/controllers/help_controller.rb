@@ -20,7 +20,9 @@ class HelpController < ApplicationController
     @country_code = AlaveteliConfiguration.iso_country_code
     @info_request = nil
     if params[:url_title]
-      @info_request = InfoRequest.find_by_url_title!(params[:url_title])
+      @info_request = InfoRequest
+        .not_embargoed
+          .find_by_url_title!(params[:url_title])
     end
   end
 
@@ -37,7 +39,7 @@ class HelpController < ApplicationController
     # look up link to request/body
     last_request_id = cookies["last_request_id"].to_i
     if last_request_id > 0
-      @last_request = InfoRequest.find(last_request_id)
+      @last_request = InfoRequest.not_embargoed.find(last_request_id)
     else
       @last_request = nil
     end
