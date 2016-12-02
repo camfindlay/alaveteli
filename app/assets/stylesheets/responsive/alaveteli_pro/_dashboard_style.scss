@@ -12,11 +12,11 @@
 .dashboard-nav {
   list-style-type: none;
   list-style: none;
-  border-bottom: 1px solid #DDDDDD;
+  border-bottom: 1px solid #ccc;
 }
 
 .dashboard-nav__item {
-  border-bottom: 1px solid #DDDDDD;
+  border-bottom: 1px solid #ccc;
   // To overlap the bottom border with that of the containing list, making it
   // appear continuous
   margin-bottom: -2px;
