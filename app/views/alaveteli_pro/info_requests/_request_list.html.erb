@@ -11,11 +11,11 @@
           <%= f.text_field :search, :placeholder => _('Search') %>
         </div>
         <div class="requests__sort">
-          <label for="sort-options"><%= _('Sort by:') %></label>
+          <label for="sort-options"><%= _('Sort by') %></label>
           <%= f.select :order, @request_filter.order_options %>
         </div>
         <div class="requests__filters">
-          <label for="filters"><%= _('Filter by:') %></label>
+          <label for="filters"><%= _('Filter by') %></label>
           <%= f.select :filter, @request_filter.filter_options %>
         </div>
       <% end %>
