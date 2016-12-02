@@ -13,14 +13,14 @@
         <%= render partial: 'alaveteli_pro/dashboard/projects' %>
 
       </div> <!-- .dashboard-left-column -->
-      <div class="dashboard-right-column">
+
         <% if @user.info_requests.empty? %>
           <%= render partial: 'no_requests' %>
         <% else %>
           <%= render partial: 'request_list' %>
         <% end %>
       </div>
-    </div>
+
   </div>  <!-- .dashboard-body -->
 
 </div>  <!-- .dashboard -->
