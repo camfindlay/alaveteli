@@ -6,7 +6,6 @@
   }
 }
 .requests__header {
-  @include flexbox;
   padding: 0.5em;
   width: 100%;
   form {
@@ -16,11 +15,17 @@
 
 .requests__filter_form {
   @include flexbox;
+  flex-wrap: wrap;
   width: 100%;
 }
 
 .requests__search {
-  @include flex(7 0 0);
+  @include flex(1 0 100%);
+  margin-bottom: 1em;
+  @include respond-min( $dashboard-collapse ){
+    @include flex(7 0 0);
+    margin-bottom: 0;
+  }
   input[type=text]{
     width: 100%;
     max-width: none;
@@ -31,8 +36,15 @@
 
 .requests__sort,
 .requests__filters {
-  @include flex(4 2 0);
-  text-align: right;
+  @include flex(1 0 100%);
+  max-width: 12em;
+  @include respond-min( 24em ){
+    @include flex(1 2 50%);
+  }
+  @include respond-min( $dashboard-collapse ){
+    @include flex(4 2 0);
+    text-align: right;
+  }
 }
 
 .requests__search,
