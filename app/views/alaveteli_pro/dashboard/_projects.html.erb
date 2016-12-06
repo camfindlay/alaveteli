@@ -41,7 +41,7 @@
     <span class="dashboard-folder__count">
       <%= @user.draft_info_requests.count %>
     </span>
-    <% if @user.draft_info_requests.count == 0 %>
+    <% if @user.draft_info_requests.count != 0 %>
       </a>
     <% else %>
       </span>
