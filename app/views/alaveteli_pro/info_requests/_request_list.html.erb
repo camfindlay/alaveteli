@@ -14,10 +14,6 @@
           <label for="sort-options"><%= _('Sort by') %></label>
           <%= f.select :order, @request_filter.order_options %>
         </div>
-        <div class="requests__filters">
-          <label for="filters"><%= _('Filter by') %></label>
-          <%= f.select :filter, @request_filter.filter_options %>
-        </div>
       <% end %>
 
     </div> <!-- .requests-header -->
