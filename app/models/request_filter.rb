@@ -52,8 +52,8 @@ class RequestFilter
     [ { :param => '',
         :value => nil,
         :label => 'All Requests' },
-      { :param => '',
-        :value => nil,
+      { :param => 'drafts',
+        :value => '',
         :label => 'Drafts' },
      ]
   end
@@ -84,8 +84,15 @@ class RequestFilter
     filter_params.include?(@filter) ? filter_values[@filter] : nil
   end
 
-  def results(info_requests)
-    info_requests = info_requests.send(filter_value) if filter_value
+  def results(user)
+    if filter == 'draft'
+      info_requests = user.draft_info_requests
+    else
+      info_requests = user.info_requests
+    end
+    if filter_value
+      info_requests = info_requests.send(filter_value)
+    end
     if search
       info_requests = info_requests.where("title ILIKE :q", q: "%#{ search }%")
     end
