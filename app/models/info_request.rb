@@ -93,6 +93,7 @@ class InfoRequest < ActiveRecord::Base
   scope :clarification_needed, State::ClarificationNeededQuery.new
   scope :complete, State::CompleteQuery.new
   scope :other, State::OtherQuery.new
+  scope :overdue, State::OverdueQuery.new
 
   def self.visible
     warn %q([DEPRECATION] InfoRequest#visible will be removed in

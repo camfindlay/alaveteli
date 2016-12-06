@@ -1,2 +1,145 @@
-<h1>Your dashboard</h1>
-<p>Welcome to your dashboard <%= @user.name %></p>
+
+<div class="dashboard">
+
+  <div class="dashboard-header">
+    <div class="row">
+      <h1><%= _("Your dashboard") %></h1>
+    </div>
+  </div>
+
+  <div class="dashboard-body">
+    <div class="row">
+      <div class="dashboard-left-column">
+
+        <%= render partial: 'alaveteli_pro/dashboard/projects' %>
+
+      </div> <!-- .dashboard-left-column -->
+
+
+    <div class="dashboard-right-column">
+
+      <div class="dashboard-todo">
+
+        <h2 class="dashboard-todo__title"><%= _("Things to do today") %></h2>
+
+        <ul class="dashboard-todo__list">
+          <% if @user.info_requests.response_received.count > 0 %>
+            <li class="dashboard-todo__list__item">
+               <%= n_("{{count}} request has received a response.",
+               "{{count}} requests have received a response.",
+               @user.info_requests.response_received.count,
+               :count => @user.info_requests.response_received.count) %>
+              <%= link_to _("Update statuses."),
+                  alaveteli_pro_info_requests_path('request_filter[filter]' => 'response_received') %>
+            </li>
+          <% end %>
+          <% if @user.embargoes.expiring.count > 0 %>
+          <li class="dashboard-todo__list__item">
+            <%= n_("{{count}} embargo is ending this week.",
+                   "{{count}} embargoes are ending this week.",
+                   @user.embargoes.expiring.count,
+                   :count => @user.embargoes.expiring.count) %>
+            <%= link_to(
+                n_("Extend or approve this embargo.",
+                   "Extend or approve these embargoes.",
+               @user.embargoes.expiring.count),
+                '') %>
+          </li>
+          <% end %>
+          <% if @user.info_requests.overdue.count > 0 %>
+            <li class="dashboard-todo__list__item">
+              3 requests are overdue or very overdue. <a href="">Send follow ups (or request internal reviews).</a>
+            </li>
+          <% end %>
+        </ul>
+
+      </div>  <!-- .dashboard-todo -->
+
+      <div class="dashboard-activity">
+
+        <h2 class="dashboard-activity__title">Activity</h2>
+
+        <div class="dashboard-activity__item">
+          <div class="dashboard-activity__item__time">Just now</div>
+          <div class="dashboard-activity__item__description">
+            <p>
+              You sent a request to the Department for Exiting the European Union:
+              <a href="/ap/request_waiting">“Details on Article 50”</a>.
+            </p>
+          </div>
+        </div>
+
+        <div class="dashboard-activity__item">
+          <div class="dashboard-activity__item__time">Today, 9am</div>
+          <div class="dashboard-activity__item__description">
+            <p>
+              Your request to the Ministry of Justice: <a href="/ap/request">“How much
+              is spent on subsidised parking”</a> has a new response.
+              <a href="/ap/request#incoming-882370">View</a>
+            </p>
+          </div>
+        </div>
+
+        <div class="dashboard-activity__item">
+          <div class="dashboard-activity__item__time">Yesterday, 5pm</div>
+          <div class="dashboard-activity__item__description">
+            <p>
+              The embargo for your request “Secondary schools place assignment
+              in Leicester” has ended and is now live. <a href="/ap/request">View</a>
+            </p>
+          </div>
+        </div>
+
+        <div class="dashboard-activity__item">
+          <div class="dashboard-activity__item__time">Yesterday, 12pm</div>
+          <div class="dashboard-activity__item__description">
+            <p>
+              Borsetshire council is now very overdue in responding to your
+              request <a href="/ap/request">“Cost of policing for fireworks display”</a>.
+              <a href="" onclick="$('.ui-dialog-content').dialog('close'); $('.dialog-internal-reviews').dialog(); return false">Request an internal review</a>
+              <div class="dialog-internal-reviews js-hide" title="Whoops">
+                <p>Sorry, we haven't made this bit yet</p>
+                <p>Why not look at <a href="/ap/request">a request page</a> instead?</p>
+              </div>
+            </p>
+          </div>
+        </div>
+
+        <div class="dashboard-activity__item">
+          <div class="dashboard-activity__item__time">18th October</div>
+          <div class="dashboard-activity__item__description">
+            <p>
+              Borsetshire council is now overdue in responding to your request
+              <a href="/ap/request">“Cost of policing for fireworks display”</a>.
+              <a href="" onclick="$('.ui-dialog-content').dialog('close'); $('.dialog-automatic-follow-up').dialog(); return false">Send an automatic follow up</a>
+              <div class="dialog-automatic-follow-up js-hide" title="Whoops">
+                <p>Sorry, we haven't made this bit yet</p>
+                <p>Why not look at <a href="/ap/request">a request page</a> instead?</p>
+              </div>
+            </p>
+          </div>
+        </div>
+
+        <div class="dashboard-activity__item">
+          <div class="dashboard-activity__item__time">23rd September</div>
+          <div class="dashboard-activity__item__description">
+            <p>
+              Louise Crow added a new annotation on your request to the
+              Department for Health: <a href="/ap/request">“Waiting times”</a>.
+              <a href="/ap/request">View</a>
+            </p>
+          </div>
+        </div>
+
+
+
+      </div> <!-- .dashboard-activity -->
+
+    </div>  <!-- .dashboard-right-column -->
+
+
+   </div>
+
+  </div>  <!-- .dashboard-body -->
+
+</div>  <!-- .dashboard -->
